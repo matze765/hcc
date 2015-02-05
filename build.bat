@@ -25,7 +25,7 @@ IF %ERRORLEVEL% GEQ 1 goto :error
 gcc -g -Wall -std=c99 -c hcc.c
 IF %ERRORLEVEL% GEQ 1 goto :error
 
-gcc -g -o compiler.exe hcc.o hcc_y.o lex.yy.o -lm -lfl
+gcc -g -o hcc.exe hcc.o hcc_y.o lex.yy.o -lm -lfl
 IF %ERRORLEVEL% GEQ 1 goto :error
 
 goto :eof
@@ -34,3 +34,4 @@ goto :eof
 echo -----
 echo Failed to compile
 echo -----
+pause
