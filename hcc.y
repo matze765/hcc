@@ -1,7 +1,7 @@
 %{
 //Prologue
 
-#include "compiler.h"
+#include "hcc.h"
 #include <string.h>
 int functionDeclarationAlreadyExists;
 int functionParameterCounter; 

@@ -1,7 +1,7 @@
 %{
 
-#include "compiler.h"
-#include "compiler.tab.h"
+#include "hcc.h"
+#include "hcc.tab.h"
 #include <string.h>
 int lineNumber = 1;
 

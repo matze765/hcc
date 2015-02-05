@@ -1,0 +1,9 @@
+@echo off
+rm hcc.output
+rm lex.yy.c
+rm hcc.o
+rm hcc_y.o
+rm lex.yy.c
+rm lex.yy.o
+rm hcc.tab.c
+rm hcc.tab.h
