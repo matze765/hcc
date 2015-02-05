@@ -28,6 +28,7 @@ IF %ERRORLEVEL% GEQ 1 goto :error
 gcc -g -o hcc.exe hcc.o hcc_y.o lex.yy.o -lm -lfl
 IF %ERRORLEVEL% GEQ 1 goto :error
 
+pause
 goto :eof
 
 :error
