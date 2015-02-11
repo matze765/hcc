@@ -19,7 +19,6 @@
 	int ival; 
 	float fval;
 	char* sval;
-	symtabEntryType type;
 }
 
 %type<sval> ID
@@ -35,8 +34,17 @@ programm
     ;
 	
 clause
-	: head IFTHEN body
-	| head DOT
+	: h_beginOfClause head IFTHEN body 	{
+											print_predicates();
+										}
+	| h_beginOfClause head DOT			{
+											print_predicates();
+										}
+	;
+h_beginOfClause 
+	: 	{
+			init_new_clause();
+		}
 	;
 	
 head 
@@ -48,7 +56,10 @@ body
 	;
 
 literal
-	: id OPA expressionList CPA { printf("Literal=%s\n", $1);}
+	: id OPA expressionList CPA 
+								{ 
+									add_predicate($1);
+								}
 	;	
 
 expressionList 
