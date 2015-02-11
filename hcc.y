@@ -2,6 +2,7 @@
 //Prologue
 
 #include "hcc.h"
+#include "queue.h"
 #include <string.h>
 
 %}
@@ -19,10 +20,15 @@
 	int ival; 
 	float fval;
 	char* sval;
+	queue *qval;
 }
 
 %type<sval> ID
 %type<sval> id
+%type<sval> expression
+%type<qval> expressionList
+
+
 
 
 
@@ -35,10 +41,10 @@ programm
 	
 clause
 	: h_beginOfClause head IFTHEN body 	{
-											print_predicates();
+											print_debug();
 										}
 	| h_beginOfClause head DOT			{
-											print_predicates();
+											print_debug();
 										}
 	;
 h_beginOfClause 
@@ -59,17 +65,31 @@ literal
 	: id OPA expressionList CPA 
 								{ 
 									add_predicate($1);
+									add_literal($1,$3)
 								}
 	;	
 
 expressionList 
-	: expression 
-	| expressionList COMMA expression
+	: expression   							{
+												$$ = queue_new();
+												char *ex = (char *) strdup($1);
+												queue_enqueue($$, ex);
+											}
+	| expressionList COMMA expression		{
+												char *ex = (char *) strdup($3);
+												$$=$1;
+												queue_enqueue($$, ex);
+											}
 	;
 	
 expression 
-	: id
-	| ID
+	: id   
+			{
+				$$=$1;
+			}
+	| ID	{
+				$$=$1
+			}
 	;
 
 	

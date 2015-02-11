@@ -19,12 +19,12 @@ int main (void){
 }
 
 void init_new_clause(){
-	/*
+	
 	if(literalQueue == NULL){
 		literalQueue = queue_new();
 	} else {
 		queue_clear(literalQueue);
-	}*/
+	}
 	
 	if(predicateQueue == NULL){
 		predicateQueue = queue_new();
@@ -36,18 +36,40 @@ void init_new_clause(){
 }
 
 void add_predicate(char *pName) {
-	//copy literal 
+	//copy name 
 	char *dup =(char *)strdup(pName);
 	queue_enqueue(predicateQueue, dup);
 }
+void add_literal(char *pName, queue *expressionList){
+	// TODO: dynamic strlen
+	char *str = (char *) malloc(1000);
+	sprintf(str, "%s(",pName);
+	int i;
+	int count = queue_getCount(expressionList);
+	for(i=0;i<count;i++){
+		if(i>0) sprintf(str,"%s,",str);
+		sprintf(str, "%s%s",str,(char*)queue_getItem(expressionList, i));
+	}
+	sprintf(str, "%s)",str);
+	queue_enqueue(literalQueue, str);
+	queue_clear(expressionList);
+	free(expressionList);
+}
 
-void print_predicates(){
-	printf("RULE(%d)=[",ruleNumber);
+void print_debug(){
+	printf("PREDICATES(%d)=[",ruleNumber);
 	int i;
 	int count = queue_getCount(predicateQueue);
 	for(i=0;i<count;i++){
 		if(i>0) printf(",");
 		printf("%s",(char*)queue_getItem(predicateQueue, i));
+	}
+	printf("]\n");
+	printf("LITERALS(%d)=[",ruleNumber);
+	count = queue_getCount(literalQueue);
+	for(i=0;i<count;i++){
+		if(i>0) printf(",");
+		printf("%s",(char*)queue_getItem(literalQueue, i));
 	}
 	printf("]\n");
 }
