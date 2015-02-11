@@ -16,7 +16,7 @@ IF %ERRORLEVEL% GEQ 1 goto :error
 gcc -g -c hcc.tab.c -o hcc_y.o
 IF %ERRORLEVEL% GEQ 1 goto :error
 
-gcc -g -Wall -std=c99 -c lex.yy.c
+gcc -g -Wall -c lex.yy.c
 IF %ERRORLEVEL% GEQ 1 goto :error
 
 gcc -g -c hcc.tab.c -o hcc_y.o

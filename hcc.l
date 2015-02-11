@@ -3,6 +3,7 @@
 #include "hcc.h"
 #include "hcc.tab.h"
 #include <string.h>
+
 int lineNumber=1;
 
 %}

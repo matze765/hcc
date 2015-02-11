@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "queue.h"
 
+//declare function to get rid of warning
+int yylex(); 
+int yyparse(); 
+void yyerror(char * str);
 
 void init_queues();
 void add_predicate(char *pName);
