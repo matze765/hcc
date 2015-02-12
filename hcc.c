@@ -12,6 +12,8 @@ extern int lineNumber;
 int ruleNumber=-1;
 queue *literalQueue;
 queue *predicateQueue;
+queue *variableQueue;		// used to store queues of variables 
+queue *tmpVarQueue; 		// used to store variables of one literal
 	
 int main (void){
   yyparse(); 
@@ -31,8 +33,16 @@ void init_new_clause(){
 	} else {
 		queue_clear(predicateQueue);
 	}
+	if(variableQueue == NULL) {
+		variableQueue = queue_new();
+	} else {
+		queue_clear(variableQueue);
+	}
 	ruleNumber++;
-	
+}
+//TODO: clean up
+void clean_up(){
+
 }
 
 void add_predicate(char *pName) {
@@ -55,8 +65,21 @@ void add_literal(char *pName, queue *expressionList){
 	queue_clear(expressionList);
 	free(expressionList);
 }
+void beginOfLiteral(){
+	tmpVarQueue = queue_new();
+}
+void add_variable(char *varName){
+	char *dup= (char *) strdup(varName);
+	queue_enqueue(tmpVarQueue,dup);
+}
+
+void endOfLiteral(){
+	queue_enqueue(variableQueue,tmpVarQueue);
+	tmpVarQueue = NULL;
+}
 
 void print_debug(){
+	//printing Predicate List
 	printf("PREDICATES(%d)=[",ruleNumber);
 	int i;
 	int count = queue_getCount(predicateQueue);
@@ -65,12 +88,32 @@ void print_debug(){
 		printf("%s",(char*)queue_getItem(predicateQueue, i));
 	}
 	printf("]\n");
+	
+	//printing Literal List
 	printf("LITERALS(%d)=[",ruleNumber);
 	count = queue_getCount(literalQueue);
 	for(i=0;i<count;i++){
 		if(i>0) printf(",");
 		printf("%s",(char*)queue_getItem(literalQueue, i));
 	}
+	printf("]\n");
+	
+	//Printing List of Variable Lists
+	printf("VARS(%d)=[",ruleNumber);
+	count = queue_getCount(variableQueue);
+	int j;
+	for(i=0;i<count;i++){
+		if(i>0) printf(",");
+		printf("[");
+		queue* q = (queue*) queue_getItem(variableQueue,i);
+		int icount = queue_getCount(q);
+		for(j=0;j<icount;j++){
+			if(j>0) printf(",");
+			printf("%s", (char*)queue_getItem(q,j));
+		}
+		printf("]");
+	}
+	
 	printf("]\n");
 }
 

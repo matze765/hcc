@@ -37,7 +37,9 @@
 %%    // grammar rules
 
 programm
-    : programm clause
+    : programm clause			{
+									clean_up();
+								}
 	|
     ;
 	
@@ -64,13 +66,19 @@ body
 	;
 
 literal
-	: id OPA expressionList CPA 
+	: h_beginOfLiteral id OPA expressionList CPA 
 								{ 
-									add_predicate($1);
-									add_literal($1,$3)
+									add_predicate($2);
+									add_literal($2,$4);
+									endOfLiteral();
 								}
 	;	
-
+h_beginOfLiteral 
+	:				{
+						beginOfLiteral();
+					}
+	;
+	
 expressionList 
 	: expression   							{
 												$$ = queue_new();
@@ -90,7 +98,8 @@ expression
 				$$=$1;
 			}
 	| ID	{
-				$$=$1
+				$$=$1;
+				add_variable($1);
 			}
 	;
 

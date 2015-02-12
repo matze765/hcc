@@ -10,8 +10,14 @@ int yyparse();
 void yyerror(char * str);
 
 void init_queues();
+
+void clean_up();
 void add_predicate(char *pName);
 void add_literal(char *pName, queue *expressionList);
+
+void beginOfLiteral();
+void add_variable(char *varName);
+void endOfLiteral();
 
 void print_debug();
 
