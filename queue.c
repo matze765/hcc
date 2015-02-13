@@ -44,8 +44,9 @@ void *queue_dequeue(queue *q) {
 	
 	q->first = second;
 	first->next = NULL;
-	
-	return first; 
+	void *d = first->data;
+	free(first);
+	return d; 
 }
 void *queue_getItem(queue* q, int i){
 	if(i >= queue_getCount(q)){

@@ -37,18 +37,20 @@
 %%    // grammar rules
 
 programm
-    : programm clause			{
+    : programm clause			
+	|						{
 									clean_up();
-								}
-	|
+							}
     ;
 	
 clause
 	: h_beginOfClause head IFTHEN body 	{
 											print_debug();
+											generateCode();
 										}
 	| h_beginOfClause head DOT			{
 											print_debug();
+											generateCode();
 										}
 	;
 h_beginOfClause 

@@ -14,9 +14,22 @@ queue *literalQueue;
 queue *predicateQueue;
 queue *variableQueue;		// used to store queues of variables 
 queue *tmpVarQueue; 		// used to store variables of one literal
+
+
+FILE *codeOutputFile;
+FILE *symTabFile;
 	
+//TODO dynamic file names
 int main (void){
-  yyparse(); 
+  codeOutputFile = fopen("out", "w+");
+  symTabFile	 = fopen("out.tab", "w+");
+  if(codeOutputFile == NULL || symTabFile == NULL ) {
+	return -1;  
+  } else {
+	yyparse();
+	fclose(codeOutputFile);
+	fclose(symTabFile);
+  } 
   return 0;
 }
 
@@ -81,27 +94,56 @@ void generateCode() {
 	queue *nodes = queue_new();
 	int nodeNr =1 ;
 	if(queue_getCount(predicateQueue) == 1 ) { // fact
-		node *n = (node *) createNode(nodeNr, 'E', 1,1,0,0, 
+		node *n = (node *) createNode(nodeNr, 'E', 2,1,0,0, 
 									  (char *) queue_getItem(literalQueue, 0));
+									  
+
 		queue_enqueue(nodes, n);
 		nodeNr++;
 		n = (node *) createNode(nodeNr, 'R', 0,0,0,0, NULL);
+	
 		queue_enqueue(nodes, n);
 	} else {
 	
 	}
 	
-	// write code to file
+	
+	
 	node *n = (node *) queue_dequeue(nodes);
+	
 	while(n != NULL) {
 		if(n->type == 'C'){
-			
+			copyNode *cp = (copyNode *)n;
+			fprintf(codeOutputFile, "%d\t%c", cp->nr, cp->type);
+			int *target = (int *) queue_dequeue(cp->nextNodes);
+			while(target != NULL ){
+				fprintf(codeOutputFile, "\t(%d,%d))", target[0], target[1]);
+				target = (int *) queue_dequeue(cp->nextNodes);
+			}
 		} else {
-		
+			fprintf(codeOutputFile, "%d\t%c\t", n->nr, n->type);
+			
+			if(n->leftNode != 0){
+				fprintf(codeOutputFile, "(%d,%d)\t",n->leftNode, n->leftNodePort);
+			} else {
+				fprintf(codeOutputFile, "-\t");
+			}
+			if(n->rightNode != 0){
+				fprintf(codeOutputFile, "(%d,%d)\t",n->rightNode, n->rightNodePort);
+			} else {
+				fprintf(codeOutputFile, "-\t");
+			}
+			
+			if(n->str != NULL){
+				 fprintf(codeOutputFile, "%s", n->str);
+			}else {
+				fprintf(codeOutputFile, "-");
+			}
 		}
+		fprintf(codeOutputFile, "\n");
 		n = (node *) queue_dequeue(nodes);
 	}
-	
+	fprintf(codeOutputFile, "\n");
 	
 	free(nodes);
 }

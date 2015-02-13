@@ -4,6 +4,7 @@
 node *node_new() {
 	node *n = (node *) malloc(sizeof(node));
 	n->nr = 0;
+	n->type = 'X';
 	n->leftNode = 0;
 	n->leftNodePort = 0;
 	n->rightNode = 0;
@@ -22,6 +23,7 @@ copyNode *copyNode_new(){
 void *createNode(int nr, char type, int leftNode, int leftNodePort,
 				 int rightNode, int rightNodePort, char *str){
 	node *n; copyNode *cn;
+	
 	if(type == 'C'){
 		cn = copyNode_new();
 		cn->nr = nr; 
