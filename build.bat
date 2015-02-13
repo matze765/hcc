@@ -28,7 +28,10 @@ IF %ERRORLEVEL% GEQ 1 goto :error
 gcc -g -Wall -c queue.c 
 IF %ERRORLEVEL% GEQ 1 goto :error
 
-gcc -g -o hcc.exe hcc.o queue.o hcc_y.o lex.yy.o -lm -lfl
+gcc -g -Wall -c node.c 
+IF %ERRORLEVEL% GEQ 1 goto :error
+
+gcc -g -o hcc.exe hcc.o queue.o node.o hcc_y.o lex.yy.o -lm -lfl
 IF %ERRORLEVEL% GEQ 1 goto :error
 
 pause

@@ -12,6 +12,7 @@ typedef struct queue {
 queue* queue_new();
 void queue_clear(queue*);
 int queue_enqueue(queue*,void*);
+void *queue_dequeue(queue*);
 void *queue_getItem(queue*, int);
 int queue_getCount(queue*);
 

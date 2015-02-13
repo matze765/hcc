@@ -3,11 +3,15 @@
 
 #include <stdio.h>
 #include "queue.h"
+#include "node.h"
 
 //declare function to get rid of warning
 int yylex(); 
 int yyparse(); 
 void yyerror(char * str);
+
+
+
 
 void init_queues();
 
@@ -18,6 +22,9 @@ void add_literal(char *pName, queue *expressionList);
 void beginOfLiteral();
 void add_variable(char *varName);
 void endOfLiteral();
+
+void generateCode();
+
 
 void print_debug();
 

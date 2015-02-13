@@ -77,7 +77,34 @@ void endOfLiteral(){
 	queue_enqueue(variableQueue,tmpVarQueue);
 	tmpVarQueue = NULL;
 }
-
+void generateCode() {
+	queue *nodes = queue_new();
+	int nodeNr =1 ;
+	if(queue_getCount(predicateQueue) == 1 ) { // fact
+		node *n = (node *) createNode(nodeNr, 'E', 1,1,0,0, 
+									  (char *) queue_getItem(literalQueue, 0));
+		queue_enqueue(nodes, n);
+		nodeNr++;
+		n = (node *) createNode(nodeNr, 'R', 0,0,0,0, NULL);
+		queue_enqueue(nodes, n);
+	} else {
+	
+	}
+	
+	// write code to file
+	node *n = (node *) queue_dequeue(nodes);
+	while(n != NULL) {
+		if(n->type == 'C'){
+			
+		} else {
+		
+		}
+		n = (node *) queue_dequeue(nodes);
+	}
+	
+	
+	free(nodes);
+}
 void print_debug(){
 	//printing Predicate List
 	printf("PREDICATES(%d)=[",ruleNumber);

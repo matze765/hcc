@@ -20,6 +20,7 @@ void queue_clear(queue* q){
 	q->first = NULL;
 }
 int queue_enqueue(queue* q,void* item) {
+	if(q == NULL) return -1;
 	queue_item *new  = (queue_item *) malloc(sizeof(queue_item));
 	if(new == NULL) return -1;
 	new->data = item;
@@ -34,6 +35,17 @@ int queue_enqueue(queue* q,void* item) {
 		cur->next = new; 
 	}
 	return 0;
+}
+
+void *queue_dequeue(queue *q) {
+   if(q == NULL || q->first == NULL) return NULL;
+	queue_item *first = q->first;
+	queue_item *second = first->next; 
+	
+	q->first = second;
+	first->next = NULL;
+	
+	return first; 
 }
 void *queue_getItem(queue* q, int i){
 	if(i >= queue_getCount(q)){
