@@ -3,6 +3,7 @@
 
 node *node_new() {
 	node *n = (node *) malloc(sizeof(node));
+	if(n == NULL) return n;
 	n->nr = 0;
 	n->type = 'X';
 	n->leftNode = 0;
@@ -15,6 +16,7 @@ node *node_new() {
 
 copyNode *copyNode_new(){
 	copyNode *cn = (copyNode *) malloc(sizeof(copyNode));
+	if(cn == NULL) return cn;
 	cn->type = 'C';
 	cn->nextNodes = queue_new();
 	return cn;
@@ -26,10 +28,12 @@ void *createNode(int nr, char type, int leftNode, int leftNodePort,
 	
 	if(type == 'C'){
 		cn = copyNode_new();
+		if(cn == NULL) return cn;
 		cn->nr = nr; 
 		return cn;
 	} else {
 		n = node_new();
+		if(n==NULL) return n;
 		n->nr   = nr;
 		n->type = type;
 		n->leftNode  = leftNode;
