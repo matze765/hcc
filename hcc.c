@@ -311,10 +311,14 @@ void generateCode() {
 			for(j=1;j<i;j++){
 				dependency *d = calcDependency(variableQueue, j,i);
 				node *dependentCopyNode =queue_getItem(copyNodes,j);
+				node *middleUNode;
+				node *groundNode;
+				char *str;
 				switch(d->type){
 					case DEPENDENCY_DEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_DEPENDENT\n", j,i);
-						node *middleUNode = (node *)createNode(nodeNr,'U', 0,0,0,0,NULL);
+						middleUNode = (node *)createNode(nodeNr,'U', 0,0,0,0,NULL);
+						nodeNr++;
 						backpatch(dependentCopyNode, LEFT, middleUNode, LEFT);
 						backpatch(lastUNode, LEFT, middleUNode, RIGHT);
 						lastUNode = middleUNode;
@@ -323,12 +327,34 @@ void generateCode() {
 							lastCheckNode= NULL;
 						}
 						
-						nodeNr++;
+						
 						queue_enqueue(nodes, middleUNode);
 						
 					break;
 					case DEPENDENCY_G_INDEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_G_INDEPENDENT\n",j,i);
+						middleUNode = (node *) createNode(nodeNr, 'U', 0,0,0,0,NULL);
+						nodeNr++;
+						queue_enqueue(nodes, middleUNode);
+						backpatch(dependentCopyNode, LEFT, middleUNode,  LEFT);
+						str = malloc(sizeof(char)* 1000);
+						str[0] = 0;
+						int x;
+						for(x=0;x<queue_getCount(d->gDependency);x++){
+							if(x>0)sprintf(str, "%s,",str);
+							sprintf(str, "%s%s", str, (char *) queue_getItem(d->gDependency, x));
+						}						
+						groundNode = (node *) createNode(nodeNr, 'G', 0,0,0,0, str);
+						nodeNr++;
+						queue_enqueue(nodes, groundNode);
+						backpatch(lastUNode, LEFT, groundNode, LEFT);
+						backpatch(groundNode, LEFT, middleUNode, RIGHT);
+						if(lastCheckNode != NULL){
+							backpatch(lastCheckNode, RIGHT, groundNode, LEFT);
+						}	
+						lastCheckNode = groundNode;
+						lastUNode     = middleUNode; 
+						
 					break;
 					case DEPENDENCY_G_I_INDEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_G_I_INDEPENDENT\n",j,i);
@@ -346,6 +372,9 @@ void generateCode() {
 			node *aNode = (node *) createNode(nodeNr, 'A',0,0,0,0, NULL);
 			nodeNr++;
 			backpatch(lastUNode, LEFT, aNode, LEFT);
+			if(lastCheckNode != NULL){
+				backpatch(lastCheckNode, RIGHT, aNode, LEFT);
+			}
 			queue_enqueue(nodes, aNode);
 			
 			// create copyNode
