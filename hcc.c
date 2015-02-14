@@ -3,6 +3,8 @@
 #include <string.h>
 #include "hcc.h"
 
+#define LEFT 1
+#define RIGHT 2
 
 //TODO: Malloc checks
 
@@ -90,6 +92,21 @@ void endOfLiteral(){
 	queue_enqueue(variableQueue,tmpVarQueue);
 	tmpVarQueue = NULL;
 }
+void backpatch(node *source, int side, node *target, int port) {
+	if(source->type == 'C'){
+		copyNode_add((copyNode *)source, target->nr, port);
+	} else {
+		if(side == LEFT) {
+			source->leftNode = target->nr;
+			source->leftNodePort = port;
+		} else if( side == RIGHT){
+			source->rightNode = target->nr; 
+			source->rightNodePort = port; 
+		}
+	}
+	
+}
+
 void generateCode() {
 	queue *nodes = queue_new();
 	int nodeNr =1 ;
@@ -104,7 +121,63 @@ void generateCode() {
 	
 		queue_enqueue(nodes, n);
 	} else {
+		// create entry unification node
+		node *entryNode = (node *) createNode(nodeNr, 'E',0,0,0,0, (char *) queue_getItem(literalQueue,0));
+		node *lastUnification = entryNode;
+		nodeNr++;
+		queue_enqueue(nodes, entryNode);
+		// create copy node to distribute entry token 
+		node *entryCopyNode = (node *) createNode(nodeNr, 'C', 0,0,0,0, NULL);
+		nodeNr++;
+		queue_enqueue(nodes, entryCopyNode);
+		backpatch(entryNode, RIGHT, entryCopyNode, LEFT);
+		
+		// queue to store the sub goal copy nodes
+		queue *copyNodes = queue_new();
+		queue_enqueue(copyNodes, entryCopyNode);
+		int i;
+		for(i=1; i<queue_getCount(literalQueue);i++){
+			// create entry U node
+			node *entryUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, (char *) queue_getItem(literalQueue,i));
+			nodeNr++;
+			queue_enqueue(nodes, entryUNode);
+			
+			node *lastUNode=entryUNode;
+			node *lastCheckNode = NULL;
+			
+			// createApplynode
+			node *aNode = (node *) createNode(nodeNr, 'A',0,0,0,0, NULL);
+			nodeNr++;
+			backpatch(lastUNode, LEFT, aNode, LEFT);
+			queue_enqueue(nodes, aNode);
+			
+			node  *copyNode = (node *) createNode(nodeNr, 'C',0,0,0,0, NULL);
+			nodeNr++;
+			backpatch(aNode, LEFT, copyNode, LEFT);
+			queue_enqueue(nodes, copyNode);
+			
+			
+			// create exit U node
+			node *exitUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, NULL);
+			nodeNr++;
+			backpatch(copyNode,LEFT, exitUNode, LEFT);
+			backpatch(lastUnification, LEFT, exitUNode, RIGHT);
+			lastUnification = exitUNode;
+			queue_enqueue(nodes, exitUNode);
+			
+			
+			
+			
+		}
+			
+		
 	
+		
+		
+		// create return node
+		node *returnNode = (node *) createNode(nodeNr, 'R', 0,0,0,0, NULL);
+		backpatch(lastUnification, LEFT, returnNode, 1);
+		queue_enqueue(nodes, returnNode);
 	}
 	
 	
@@ -117,7 +190,7 @@ void generateCode() {
 			fprintf(codeOutputFile, "%d\t%c", cp->nr, cp->type);
 			int *target = (int *) queue_dequeue(cp->nextNodes);
 			while(target != NULL ){
-				fprintf(codeOutputFile, "\t(%d,%d))", target[0], target[1]);
+				fprintf(codeOutputFile, "\t(%d,%d)", target[0], target[1]);
 				target = (int *) queue_dequeue(cp->nextNodes);
 			}
 		} else {
