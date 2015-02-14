@@ -18,6 +18,7 @@ id ([a-z][a-zA-Z0-9_]*)
 {ID} {yylval.sval = strdup(yytext); return ID;};
 {id} {yylval.sval = strdup(yytext); return id;};  
 
+\%.*\n {++lineNumber; }   
 \. return DOT;
 :- return IFTHEN;
 \( return OPA;
