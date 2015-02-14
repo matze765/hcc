@@ -305,27 +305,27 @@ void generateCode() {
 			node *lastUNode=entryUNode;
 			node *lastCheckNode = NULL;
 			
-			// createApplynode
-			node *aNode = (node *) createNode(nodeNr, 'A',0,0,0,0, NULL);
-			nodeNr++;
-			backpatch(lastUNode, LEFT, aNode, LEFT);
-			queue_enqueue(nodes, aNode);
-			
-			// create copyNode
-			node  *copyNode = (node *) createNode(nodeNr, 'C',0,0,0,0, NULL);
-			nodeNr++;
-			backpatch(aNode, LEFT, copyNode, LEFT);
-			queue_enqueue(nodes, copyNode);
-			queue_enqueue(copyNodes, copyNode);
 			
 			// create check nodes 
-			
 			int j;
 			for(j=1;j<i;j++){
 				dependency *d = calcDependency(variableQueue, j,i);
+				node *dependentCopyNode =queue_getItem(copyNodes,j);
 				switch(d->type){
 					case DEPENDENCY_DEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_DEPENDENT\n", j,i);
+						node *middleUNode = (node *)createNode(nodeNr,'U', 0,0,0,0,NULL);
+						backpatch(dependentCopyNode, LEFT, middleUNode, LEFT);
+						backpatch(lastUNode, LEFT, middleUNode, RIGHT);
+						lastUNode = middleUNode;
+						if(lastCheckNode != NULL){
+							backpatch(lastCheckNode, RIGHT, middleUNode, RIGHT);
+							lastCheckNode= NULL;
+						}
+						
+						nodeNr++;
+						queue_enqueue(nodes, middleUNode);
+						
 					break;
 					case DEPENDENCY_G_INDEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_G_INDEPENDENT\n",j,i);
@@ -341,6 +341,19 @@ void generateCode() {
 					break;
 				}
 			}
+			
+			// createApplynode
+			node *aNode = (node *) createNode(nodeNr, 'A',0,0,0,0, NULL);
+			nodeNr++;
+			backpatch(lastUNode, LEFT, aNode, LEFT);
+			queue_enqueue(nodes, aNode);
+			
+			// create copyNode
+			node  *copyNode = (node *) createNode(nodeNr, 'C',0,0,0,0, NULL);
+			nodeNr++;
+			backpatch(aNode, LEFT, copyNode, LEFT);
+			queue_enqueue(nodes, copyNode);
+			queue_enqueue(copyNodes, copyNode);
 			
 			// create exit U node
 			node *exitUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, NULL);
