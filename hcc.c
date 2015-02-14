@@ -16,6 +16,7 @@ queue *literalQueue;
 queue *predicateQueue;
 queue *variableQueue;		// used to store queues of variables 
 queue *tmpVarQueue; 		// used to store variables of one literal
+queue *newVarQueue;			// used to store which vars are new in each literal 
 
 
 FILE *codeOutputFile;
@@ -106,6 +107,39 @@ void backpatch(node *source, int side, node *target, int port) {
 	}
 	
 }
+void calcNewVariables(){
+	newVarQueue = queue_new();
+	
+	int i,j;
+	for(i=0; i<queue_getCount(variableQueue);i++){
+		queue *innerQueue = (queue *) queue_getItem(variableQueue, i);
+		queue *tmpQueue = queue_new();
+		queue_enqueue(newVarQueue, tmpQueue);
+		for(j=0;j<queue_getCount(innerQueue);j++){
+			char *variable = (char *) queue_getItem(innerQueue,j);
+			int isNewVariable = 1;  // ==TRUE
+			int x,y;
+			for(x=0;x<i;x++){
+				
+				queue *nInnerQueue =(queue *) queue_getItem(variableQueue, x);
+				for(y=0;y<queue_getCount(nInnerQueue);y++){
+					char *nVariable = (char *) queue_getItem(nInnerQueue, y);
+					isNewVariable = isNewVariable &&  strcmp(variable,nVariable);
+					if(!isNewVariable)break;
+				}
+				if(!isNewVariable)break;
+			}
+			if(isNewVariable)	 queue_enqueue(tmpQueue, variable);
+		}
+	}
+}
+
+dependency *calcDependency(variableQueue, i,j) {
+	dependency *d = (dependency *) malloc(sizeof(dependency));
+	if(d==NULL) return NULL;
+	
+}
+
 
 void generateCode() {
 	queue *nodes = queue_new();
@@ -151,11 +185,37 @@ void generateCode() {
 			backpatch(lastUNode, LEFT, aNode, LEFT);
 			queue_enqueue(nodes, aNode);
 			
+			// create copyNode
 			node  *copyNode = (node *) createNode(nodeNr, 'C',0,0,0,0, NULL);
 			nodeNr++;
 			backpatch(aNode, LEFT, copyNode, LEFT);
 			queue_enqueue(nodes, copyNode);
+			queue_enqueue(copyNodes, copyNode);
 			
+			// create check nodes 
+			/*
+			int j;
+			for(j=1;j<i;j++){
+				dependency *d = calcDependency(variableQueue, i,j);
+				switch(d->type){
+					case DEPENDENCY_DEPENDENT:
+					
+					break;
+					case DEPENDENCY_G_INDEPENDENT:
+					
+					break;
+					case DEPENDENCY_G_I_INDEPENDENT:
+					
+					break;
+					case DEPENDENCY_I_INDEPENDENT:
+					
+					break;
+					case DEPENDENCY_INDEPENDENT:
+					
+					break;
+				
+				}
+			}*/
 			
 			// create exit U node
 			node *exitUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, NULL);
@@ -164,16 +224,7 @@ void generateCode() {
 			backpatch(lastUnification, LEFT, exitUNode, RIGHT);
 			lastUnification = exitUNode;
 			queue_enqueue(nodes, exitUNode);
-			
-			
-			
-			
 		}
-			
-		
-	
-		
-		
 		// create return node
 		node *returnNode = (node *) createNode(nodeNr, 'R', 0,0,0,0, NULL);
 		backpatch(lastUnification, LEFT, returnNode, 1);
@@ -255,7 +306,22 @@ void print_debug(){
 		}
 		printf("]");
 	}
+	printf("]\n");
 	
+	//Printing List of New Variables
+	printf("NEWVARS(%d)=[", ruleNumber);
+	count = queue_getCount(newVarQueue);
+	for(i=0;i<count;i++){
+		if(i>0) printf(",");
+		printf("[");
+		queue* q = (queue*) queue_getItem(newVarQueue,i);
+		int icount = queue_getCount(q);
+		for(j=0;j<icount;j++){
+			if(j>0) printf(",");
+			printf("%s", (char*)queue_getItem(q,j));
+		}
+		printf("]");
+	}
 	printf("]\n");
 }
 

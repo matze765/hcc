@@ -5,10 +5,22 @@
 #include "queue.h"
 #include "node.h"
 
+#define DEPENDENCY_DEPENDENT 		1
+#define DEPENDENCY_G_INDEPENDENT 	2
+#define DEPENDENCY_G_I_INDEPENDENT 	3
+#define DEPENDENCY_I_INDEPENDENT 	4
+#define DEPENDENCY_INDEPENDENT 		5
+
 //declare function to get rid of warning
 int yylex(); 
 int yyparse(); 
 void yyerror(char * str);
+
+typedef struct dependency {
+	int type;
+	queue *gDependency;
+	queue *iDependency; 
+} dependency;
 
 
 
@@ -23,6 +35,9 @@ void beginOfLiteral();
 void add_variable(char *varName);
 void endOfLiteral();
 
+void backpatch(node *source, int side, node *target, int port);
+void calcNewVariables();
+dependency *calcDependency(variableQueue, i,j);
 void generateCode();
 
 
