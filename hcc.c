@@ -359,6 +359,42 @@ void generateCode() {
 					break;
 					case DEPENDENCY_G_I_INDEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_G_I_INDEPENDENT\n",j,i);
+						middleUNode = (node *) createNode(nodeNr, 'U', 0,0,0,0, NULL);
+						nodeNr++;
+						queue_enqueue(nodes, middleUNode);
+						backpatch(dependentCopyNode, LEFT, middleUNode, LEFT);
+						str = malloc(sizeof(char)* 1000);
+						str[0] = 0;
+						for(x=0;x<queue_getCount(d->gDependency);x++){
+							if(x>0)sprintf(str, "%s,",str);
+							sprintf(str, "%s%s", str, (char *) queue_getItem(d->gDependency, x));
+						}						
+						GNode = (node *) createNode(nodeNr, 'G', 0,0,0,0, str);
+						nodeNr++;
+						queue_enqueue(nodes, GNode);
+						backpatch(lastUNode, LEFT, GNode,LEFT);
+						backpatch(GNode, LEFT, middleUNode, RIGHT);
+						if(lastCheckNode != NULL) {
+							backpatch(lastCheckNode, RIGHT, GNode, LEFT);
+						}
+						str = malloc(sizeof(char)* 1000);
+						sprintf(str, "[");
+						for(x=0;x<queue_getCount(d->iDependency);x++){
+							if(x>0)sprintf(str, "%s,",str);
+							queue *tmpQueue = (queue*) queue_getItem(d->iDependency, x);
+
+							sprintf(str, "%s[%s,%s]", str, (char *) queue_getItem(tmpQueue, 0), 
+															(char *) queue_getItem(tmpQueue, 1));
+						}
+						sprintf(str,"%s]",str);
+						INode  = (node *) createNode(nodeNr,'I', 0,0,0,0,str);
+						nodeNr++;
+						queue_enqueue(nodes, INode);
+						backpatch(GNode, RIGHT, INode, LEFT);
+						backpatch(INode, LEFT, middleUNode,RIGHT);
+						lastCheckNode=INode;
+						lastUNode= middleUNode;
+						
 						
 					break;
 					case DEPENDENCY_I_INDEPENDENT:
@@ -390,6 +426,7 @@ void generateCode() {
 					break;
 					case DEPENDENCY_INDEPENDENT:
 						printf("DEP(%d,%d)= DEPENDENCY_INDEPENDENT\n",j,i);
+						// nothing to do here 
 					break;
 				}
 			}
