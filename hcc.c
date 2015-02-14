@@ -136,6 +136,18 @@ void calcNewVariables(){
 	}
 }
 
+void printQueue(queue *q){
+	printf("[");
+	int i;
+	int count = queue_getCount(q);
+	for(i=0;i<count;i++){
+		if(i>0) printf(",");
+		printf("%s",(char*)queue_getItem(q, i));
+	}
+	printf("]\n");
+}
+
+//TODO: get rid of goto
 dependency *calcDependency(queue *variableQueue, int i, int j) {
 	dependency *d = (dependency *) malloc(sizeof(dependency));
 	d->gDependency = NULL;
@@ -147,56 +159,111 @@ dependency *calcDependency(queue *variableQueue, int i, int j) {
 	queue *right  	= queue_getItem(variableQueue, j);
 	queue *rightNew	= queue_getItem(newVarQueue,   j);
 	
-	
-	
-	queue *intersection_LN_R = QL_intersection(leftNew,right);
-	
+	// declare all variables needed later; 
+	queue *intersection_LN_R 	= NULL;
+	queue *intersection_L_R  	= NULL;
+	queue *union_LN_R			= NULL;
+	queue *union_L_RN			= NULL;
+	queue *A 					= NULL;
+	queue *B					= NULL;
 	
 	//check for DEPENDENCY_DEPENDENT
+	intersection_LN_R = QL_intersection(leftNew,right);
+	//printQueue(intersection_LN_R);
 	if(!QL_isEmpty(intersection_LN_R)) {
 		d->type = DEPENDENCY_DEPENDENT;
-		
+		goto end;
+	} 
+	// check for DEPENDENCY_G_INDEPENDENT
+	intersection_L_R 	= QL_intersection(left,right);
+	union_LN_R 			= QL_union(leftNew, right);
+	union_L_RN 			= QL_union(left, rightNew);	 
+	A 		  			= QL_without(left, union_LN_R); // L\(LN u R)
+	B 		  			= QL_without(right, union_L_RN); // R\ (L u RN) 
+	if(!QL_isEmpty(intersection_L_R) 
+		&& QL_isEmpty(intersection_LN_R)
+		&& (QL_isEmpty(A)||QL_isEmpty(B))){
+		d->type = DEPENDENCY_G_INDEPENDENT;
+		d->gDependency = QL_copy(intersection_L_R);
+		goto end; 
+	}
+	
+	// check for DEPENDENCY_G_I_INDEPENDENT
+	if(!QL_isEmpty(intersection_L_R)
+		&& QL_isEmpty(intersection_LN_R)
+		&& !QL_isEmpty(A)
+		&& !QL_isEmpty(B)){
+		d->type = DEPENDENCY_G_I_INDEPENDENT;
+		d->gDependency = QL_copy(intersection_L_R);
+		d->iDependency = queue_new();
+		int i,j;
+		for(i=0;i<queue_getCount(A);i++){
+			for(j=0;j<queue_getCount(B);j++){
+				queue *tmp= queue_new();
+				char *a = strdup(queue_getItem(A,i));
+				char *b = strdup(queue_getItem(B,j));
+				queue_enqueue(tmp,a);
+				queue_enqueue(tmp,b);
+				queue_enqueue(d->iDependency,tmp);
+			}
+		}
+		goto end;
+	}
+	// check for DEPENDENCY_I_INDEPENDENT
+	if(!QL_isEmpty(intersection_L_R)
+		&& !QL_isEmpty(A)
+		&& !QL_isEmpty(B)){
+		d->type = DEPENDENCY_I_INDEPENDENT;
+		d->iDependency = queue_new();
+		int i,j;
+		for(i=0;i<queue_getCount(A);i++){
+			for(j=0;j<queue_getCount(B);j++){
+				queue *tmp= queue_new();
+				char *a = strdup(queue_getItem(A,i));
+				char *b = strdup(queue_getItem(B,j));
+				queue_enqueue(tmp,a);
+				queue_enqueue(tmp,b);
+				queue_enqueue(d->iDependency,tmp);
+			}
+		}
+		goto end;
+	}
+	
+	// check for DEPENDENCY_INDEPENDENT
+	if(QL_isEmpty(intersection_L_R)
+		&&  (QL_isEmpty(A)||QL_isEmpty(B))){			
+		d->type = DEPENDENCY_INDEPENDENT;
+		goto end;
+	}
+	
+	end:
+	// clean up
+	if(intersection_LN_R != NULL){
 		queue_clear(intersection_LN_R);
 		free(intersection_LN_R);
-		
-		return d;
 	}
-	
-	queue *intersection_L_R = QL_intersection(left,right);
-	queue *union_LN_R = QL_union(leftNew, right);
-	queue *union_L_RN = QL_union(left, rightNew);	 
-	queue *A 		  = QL_without(left, union_LN_R); // L\(LN u R)
-	queue *B 		  = QL_without(right, union_L_RN); // R\ (L u RN)
-	
-	// check for DEPENDENCY_G_INDEPENDENT
-	if(!QL_isEmpty(intersection_L_R)){
-		if(QL_isEmpty(A)||QL_isEmpty(B)){
-			d->type = DEPENDENCY_G_INDEPENDENT;
-			d->gDependency = QL_copy(intersection_L_R);
-			
-			// clean up 
-			queue_clear(intersection_LN_R);
-			queue_clear(intersection_L_R);
-			queue_clear(union_LN_R);
-			queue_clear(union_L_RN);
-			queue_clear(A);
-			queue_clear(B);
-			free(intersection_LN_R);
-			free(intersection_L_R);
-			free(union_LN_R);
-			free(union_L_RN);
-			free(A); free(B);
-			
-			return d;
-		}
+	if(intersection_L_R != NULL ){
+		queue_clear(intersection_L_R);
+		free(intersection_L_R);
 	}
-	
-	
-	queue_clear(union_LN_R);
-	free(A);
-	queue_clear(union_L_RN);
-	free(B);
-	
+	if(union_LN_R != NULL){
+		queue_clear(union_LN_R);
+		free(union_LN_R);
+	}
+	if(union_L_RN != NULL){
+		queue_clear(union_L_RN);
+		free(union_L_RN);
+	}
+	if(A != NULL){
+		queue_clear(A);
+		free(A);
+	}
+	if(B != NULL){
+		queue_clear(B);
+		free(B);
+	}
+
+	return d;
 }
 
 
@@ -252,29 +319,28 @@ void generateCode() {
 			queue_enqueue(copyNodes, copyNode);
 			
 			// create check nodes 
-			/*
+			
 			int j;
 			for(j=1;j<i;j++){
-				dependency *d = calcDependency(variableQueue, i,j);
+				dependency *d = calcDependency(variableQueue, j,i);
 				switch(d->type){
 					case DEPENDENCY_DEPENDENT:
-					
+						printf("DEP(%d,%d)= DEPENDENCY_DEPENDENT\n", j,i);
 					break;
 					case DEPENDENCY_G_INDEPENDENT:
-					
+						printf("DEP(%d,%d)= DEPENDENCY_G_INDEPENDENT\n",j,i);
 					break;
 					case DEPENDENCY_G_I_INDEPENDENT:
-					
+						printf("DEP(%d,%d)= DEPENDENCY_G_I_INDEPENDENT\n",j,i);
 					break;
 					case DEPENDENCY_I_INDEPENDENT:
-					
+						printf("DEP(%d,%d)= DEPENDENCY_I_INDEPENDENT\n",j,i);
 					break;
 					case DEPENDENCY_INDEPENDENT:
-					
+						printf("DEP(%d,%d)= DEPENDENCY_INDEPENDENT\n",j,i);
 					break;
-				
 				}
-			}*/
+			}
 			
 			// create exit U node
 			node *exitUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, NULL);

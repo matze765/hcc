@@ -27,8 +27,13 @@ queue *QL_union(queue *q1, queue *q2) {
 			queue_enqueue(res, strdupl);
 		}
 	}	
+	return res;
 }
+
+
 queue *QL_intersection(queue *q1, queue *q2){
+	
+	
 	if(q1==NULL|| q2 == NULL) return NULL;
 	queue *res = queue_new();
 	int i,j;
