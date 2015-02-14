@@ -16,7 +16,7 @@
 %start programm
 %token ID id DOT IFTHEN
 %token OPA CPA COMMA
-
+%token OBR CBR PIPE
 
 %union{
 	int ival; 
@@ -73,6 +73,7 @@ literal
 	: h_beginOfLiteral id OPA expressionList CPA 
 								{ 
 									add_predicate($2);
+									printf("%s\n", $2);
 									add_literal($2,$4);
 									endOfLiteral();
 								}
@@ -105,6 +106,14 @@ expression
 				$$=$1;
 				add_variable($1);
 			}
+	| OBR expression PIPE expression CBR 	{
+												$$ = (char *) malloc(1000);
+												sprintf($$, "[%s|%s]", $2, $4);
+											}
+	| OBR expression CBR 					{
+												$$ = (char *) malloc(1000);
+												sprintf($$, "[%s]", $2);
+											}
 	;
 
 	

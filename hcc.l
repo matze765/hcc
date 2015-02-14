@@ -23,6 +23,9 @@ id ([a-z][a-zA-Z0-9_]*)
 :- return IFTHEN;
 \( return OPA;
 \) return CPA;
+\[ return OBR;
+\] return CBR;
+\| return PIPE;
 \, return COMMA;
 \n ++lineNumber;
 [ \t] 
