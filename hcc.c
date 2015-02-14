@@ -210,7 +210,7 @@ dependency *calcDependency(queue *variableQueue, int i, int j) {
 		goto end;
 	}
 	// check for DEPENDENCY_I_INDEPENDENT
-	if(!QL_isEmpty(intersection_L_R)
+	if(QL_isEmpty(intersection_L_R)
 		&& !QL_isEmpty(A)
 		&& !QL_isEmpty(B)){
 		d->type = DEPENDENCY_I_INDEPENDENT;
@@ -301,7 +301,7 @@ void generateCode() {
 			node *entryUNode = (node *) createNode(nodeNr, 'U',0,0,0,0, (char *) queue_getItem(literalQueue,i));
 			nodeNr++;
 			queue_enqueue(nodes, entryUNode);
-			
+			backpatch(entryCopyNode, LEFT, entryUNode, LEFT);
 			node *lastUNode=entryUNode;
 			node *lastCheckNode = NULL;
 			
