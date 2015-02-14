@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "queue.h"
 #include "node.h"
+#include "variableQueueLogic.h"
 
 #define DEPENDENCY_DEPENDENT 		1
 #define DEPENDENCY_G_INDEPENDENT 	2
@@ -37,7 +38,7 @@ void endOfLiteral();
 
 void backpatch(node *source, int side, node *target, int port);
 void calcNewVariables();
-dependency *calcDependency(variableQueue, i,j);
+dependency *calcDependency(queue *variableQueue,int i,int j);
 void generateCode();
 
 

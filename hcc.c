@@ -85,8 +85,10 @@ void beginOfLiteral(){
 	tmpVarQueue = queue_new();
 }
 void add_variable(char *varName){
-	char *dup= (char *) strdup(varName);
-	queue_enqueue(tmpVarQueue,dup);
+	if(!QL_isPartOf(varName, tmpVarQueue)){
+		char *dup= (char *) strdup(varName);
+		queue_enqueue(tmpVarQueue,dup);
+	}
 }
 
 void endOfLiteral(){
@@ -134,9 +136,66 @@ void calcNewVariables(){
 	}
 }
 
-dependency *calcDependency(variableQueue, i,j) {
+dependency *calcDependency(queue *variableQueue, int i, int j) {
 	dependency *d = (dependency *) malloc(sizeof(dependency));
+	d->gDependency = NULL;
+	d->iDependency = NULL;
 	if(d==NULL) return NULL;
+	
+	queue *left 	= queue_getItem(variableQueue, i);
+	queue *leftNew 	= queue_getItem(newVarQueue,   i);
+	queue *right  	= queue_getItem(variableQueue, j);
+	queue *rightNew	= queue_getItem(newVarQueue,   j);
+	
+	
+	
+	queue *intersection_LN_R = QL_intersection(leftNew,right);
+	
+	
+	//check for DEPENDENCY_DEPENDENT
+	if(!QL_isEmpty(intersection_LN_R)) {
+		d->type = DEPENDENCY_DEPENDENT;
+		
+		queue_clear(intersection_LN_R);
+		free(intersection_LN_R);
+		
+		return d;
+	}
+	
+	queue *intersection_L_R = QL_intersection(left,right);
+	queue *union_LN_R = QL_union(leftNew, right);
+	queue *union_L_RN = QL_union(left, rightNew);	 
+	queue *A 		  = QL_without(left, union_LN_R); // L\(LN u R)
+	queue *B 		  = QL_without(right, union_L_RN); // R\ (L u RN)
+	
+	// check for DEPENDENCY_G_INDEPENDENT
+	if(!QL_isEmpty(intersection_L_R)){
+		if(QL_isEmpty(A)||QL_isEmpty(B)){
+			d->type = DEPENDENCY_G_INDEPENDENT;
+			d->gDependency = QL_copy(intersection_L_R);
+			
+			// clean up 
+			queue_clear(intersection_LN_R);
+			queue_clear(intersection_L_R);
+			queue_clear(union_LN_R);
+			queue_clear(union_L_RN);
+			queue_clear(A);
+			queue_clear(B);
+			free(intersection_LN_R);
+			free(intersection_L_R);
+			free(union_LN_R);
+			free(union_L_RN);
+			free(A); free(B);
+			
+			return d;
+		}
+	}
+	
+	
+	queue_clear(union_LN_R);
+	free(A);
+	queue_clear(union_L_RN);
+	free(B);
 	
 }
 
