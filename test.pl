@@ -1,20 +1,21 @@
 
-% SAMPLE DEPENDENCY_DEPENDENT
-%a(X,Y) :- b(X,Z), c(Y,Z).
 
-
-% DEPENDENCY_G_INDEPENDENT
-% a(X) :- b(X), c(X).
-% DEPENDENCY_G_I_INDEPENDENT 
-% a(X,Y,Z) :- b(X,Y), c(X,Z).
-% DEPENDENCY_I_INDEPENDENT
-% a(X,Y) :- b(X), c(Y).
-% DEPENDENCY_INDEPENDENT
-% a(X) :- b(Y), c(Z). 
-
-
-%a([A|B]) :- b(A), c(B).
-
+%1
+a(X,Y) :- b(X,Z), c(Y,Z).
+%2
+a(X) :- b(X), c(X).
+%3
+a(X,Y,Z) :- b(X,Y), c(X,Z).
+%4
+a(X,Y) :- b(X), c(Y).
+%5
+a(X) :- b(Y), c(Z). 
+%6
+a([A|B]) :- b(A), c(B).
+%7
 a([A],[B]) :- b([[A]]), c([B]).
+%8
+a(X,Y,Z) :- b(X,Y), c(X,Z), d(X).
+
 
 
