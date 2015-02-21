@@ -45,14 +45,10 @@ programm
 	
 clause
 	: h_beginOfClause head IFTHEN body 	{
-											calcNewVariables();
-											print_debug();
-											generateCode();
+											end_of_clause();
 										}
 	| h_beginOfClause head DOT			{
-											calcNewVariables();
-											print_debug();
-											generateCode();
+											end_of_clause();
 										}
 	;
 h_beginOfClause 

@@ -7,6 +7,7 @@
 
 #include "queue.h"
 #include "variableQueueLogic.h"
+#include "node.h"
 
 #define CG_CODE_OUTPUT_FILE "out"
 #define CG_SYMTAB_FILE "out.tab"
@@ -18,6 +19,10 @@
 #define DEPENDENCY_I_INDEPENDENT 	4
 #define DEPENDENCY_INDEPENDENT 		5
 
+
+#define LEFT_PORT 1
+#define RIGHT_PORT 2
+
 typedef struct dependency {
 	int type;
 	queue *gDependency;
@@ -28,10 +33,15 @@ typedef struct dependency {
 FILE *codeOutputFile;
 FILE *symTabFile;
 
+// public API
 int  cg_init_files();
 void cg_close_files();
 
-dependency *calcDependency(queue *variableQueue, queue *newVarQueue, int i, int j);
+
+void cg_generate_code(queue *variableQueue, queue *newVarQueue, 
+			      queue *predicateQueue, queue *literalQueue);
+				  
+
 
 
 

@@ -22,30 +22,31 @@ copyNode *copyNode_new(){
 	return cn;
 }
 
-void *createNode(int nr, char type, int leftNode, int leftNodePort,
-				 int rightNode, int rightNodePort, char *str){
+void *createNode(queue *nodeQueue, char type,  char *str){
 	node *n; copyNode *cn;
-	
+	int nr = queue_getCount(nodeQueue)+1;
 	if(type == 'C'){
 		cn = copyNode_new();
 		if(cn == NULL) return cn;
-		cn->nr = nr; 
+		cn->nr = nr;
+		queue_enqueue(nodeQueue, cn);
 		return cn;
 	} else {
 		n = node_new();
 		if(n==NULL) return n;
 		n->nr   = nr;
 		n->type = type;
-		n->leftNode  = leftNode;
-		n->leftNodePort = leftNodePort;
-		n->rightNode = rightNode;
-		n->rightNodePort = rightNodePort;
+		n->leftNode  		= 0;
+		n->leftNodePort 	= 0;
+		n->rightNode 		= 0;
+		n->rightNodePort 	= 0;
 		if(str != NULL) {
 			char *strcp = strdup(str);
 			n->str = strcp;
 		} else {
 			n->str = NULL;
 		}
+		queue_enqueue(nodeQueue, n);
 		return n;
 	}
 }

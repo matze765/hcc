@@ -11,19 +11,17 @@
 #include "codeGeneration.h"
 
 
-#define LEFT 1
-#define RIGHT 2
+queue *literalQueue;
+queue *predicateQueue;
+queue *variableQueue;		// used to store queues of variables 
+queue *tmpVarQueue; 		// used to store variables of one literal
+queue *newVarQueue;			// used to store which vars are new in each literal 
 
 
 //declare function to get rid of warning
 int yylex(); 
 int yyparse(); 
 void yyerror(char * str);
-
-
-
-
-
 
 void init_queues();
 
@@ -35,9 +33,13 @@ void beginOfLiteral();
 void add_variable(char *varName);
 void endOfLiteral();
 
-void backpatch(node *source, int side, node *target, int port);
+void end_of_clause();
+
+
+
+
 void calcNewVariables();
-void generateCode();
+
 
 
 void print_debug();
