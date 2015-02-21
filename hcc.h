@@ -23,24 +23,22 @@ int yylex();
 int yyparse(); 
 void yyerror(char * str);
 
-void init_queues();
 
-void clean_up();
-void add_predicate(char *pName);
-void add_literal(char *pName, queue *expressionList);
-
-void beginOfLiteral();
-void add_variable(char *varName);
-void endOfLiteral();
-
+void begin_of_clause();
 void end_of_clause();
 
+void begin_of_literal();
+void end_of_literal();
 
 
 
-void calcNewVariables();
+void add_predicate(char *pName);
+void add_literal(char *pName, queue *expressionList);
+void add_variable(char *varName);
 
+void calc_new_variables();
 
+void clean_up();
 
 void print_debug();
 

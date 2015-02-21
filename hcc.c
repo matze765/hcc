@@ -25,8 +25,7 @@ int main (void){
   return 0;
 }
 
-void init_new_clause(){
-	
+void begin_of_clause(){
 	if(literalQueue == NULL){
 		literalQueue = queue_new();
 	} else {
@@ -46,16 +45,20 @@ void init_new_clause(){
 	ruleNumber++;
 }
 void end_of_clause(){
-	calcNewVariables();
+	calc_new_variables();
 	print_debug();
 	cg_generate_code(	variableQueue, newVarQueue,
 						predicateQueue, literalQueue);
 	
 }
 
-//TODO: clean up
-void clean_up(){
+void begin_of_literal(){
+	tmpVarQueue = queue_new();
+}
 
+void end_of_literal(){
+	queue_enqueue(variableQueue,tmpVarQueue);
+	tmpVarQueue = NULL;
 }
 
 void add_predicate(char *pName) {
@@ -78,9 +81,7 @@ void add_literal(char *pName, queue *expressionList){
 	queue_clear(expressionList);
 	free(expressionList);
 }
-void beginOfLiteral(){
-	tmpVarQueue = queue_new();
-}
+
 void add_variable(char *varName){
 	if(!QL_isPartOf(varName, tmpVarQueue)){
 		char *dup= (char *) strdup(varName);
@@ -88,14 +89,9 @@ void add_variable(char *varName){
 	}
 }
 
-void endOfLiteral(){
-	queue_enqueue(variableQueue,tmpVarQueue);
-	tmpVarQueue = NULL;
-}
 
-void calcNewVariables(){
+void calc_new_variables(){
 	newVarQueue = queue_new();
-	
 	int i,j;
 	for(i=0; i<queue_getCount(variableQueue);i++){
 		queue *innerQueue = (queue *) queue_getItem(variableQueue, i);
@@ -183,6 +179,11 @@ void print_debug(){
 		printf("]");
 	}
 	printf("]\n");
+}
+
+//TODO: clean up
+void clean_up(){
+
 }
 
 

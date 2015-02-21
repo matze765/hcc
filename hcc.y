@@ -53,7 +53,7 @@ clause
 	;
 h_beginOfClause 
 	: 	{
-			init_new_clause();
+			begin_of_clause();
 		}
 	;
 	
@@ -69,14 +69,13 @@ literal
 	: h_beginOfLiteral id OPA expressionList CPA 
 								{ 
 									add_predicate($2);
-									printf("%s\n", $2);
 									add_literal($2,$4);
-									endOfLiteral();
+									end_of_literal();
 								}
 	;	
 h_beginOfLiteral 
 	:				{
-						beginOfLiteral();
+						begin_of_literal();
 					}
 	;
 	
