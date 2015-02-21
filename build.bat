@@ -34,7 +34,10 @@ IF %ERRORLEVEL% GEQ 1 goto :error
 gcc -g -Wall -c variableQueueLogic.c 
 IF %ERRORLEVEL% GEQ 1 goto :error
 
-gcc -g -o hcc.exe hcc.o queue.o node.o variableQueueLogic.o hcc_y.o lex.yy.o -lm -lfl
+gcc -g -Wall -c codeGeneration.c 
+IF %ERRORLEVEL% GEQ 1 goto :error
+
+gcc -g -o hcc.exe codeGeneration.o hcc.o queue.o node.o variableQueueLogic.o hcc_y.o lex.yy.o -lm -lfl
 IF %ERRORLEVEL% GEQ 1 goto :error
 
 pause

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "hcc.h"
+#include "codeGeneration.h"
 
 #define LEFT 1
 #define RIGHT 2
@@ -19,19 +20,15 @@ queue *tmpVarQueue; 		// used to store variables of one literal
 queue *newVarQueue;			// used to store which vars are new in each literal 
 
 
-FILE *codeOutputFile;
-FILE *symTabFile;
+
 	
 //TODO dynamic file names
 int main (void){
-  codeOutputFile = fopen("out", "w+");
-  symTabFile	 = fopen("out.tab", "w+");
-  if(codeOutputFile == NULL || symTabFile == NULL ) {
+  if(cg_init_files() == -1) {
 	return -1;  
   } else {
 	yyparse();
-	fclose(codeOutputFile);
-	fclose(symTabFile);
+	cg_close_files();
   } 
   return 0;
 }

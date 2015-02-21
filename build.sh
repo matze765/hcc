@@ -46,7 +46,12 @@ if [ "$?" != 0 ]; then
 	exit 1;
 fi
 
-gcc -g -o hcc hcc.o queue.o node.o variableQueueLogic.o hcc_y.o lex.yy.o -lm -lfl
+gcc -g -Wall -c codeGeneration.c 
+if [ "$?" != 0 ]; then 
+	exit 1;
+fi
+
+gcc -g -o hcc codeGeneration.o hcc.o queue.o node.o variableQueueLogic.o hcc_y.o lex.yy.o -lm -lfl
 if [ "$?" != 0 ]; then 
 	exit 1;
 fi
