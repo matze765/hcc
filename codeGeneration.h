@@ -8,9 +8,10 @@
 #include "queue.h"
 #include "variableQueueLogic.h"
 #include "node.h"
+#include "symTab.h"
 
 #define CG_CODE_OUTPUT_FILE "out"
-#define CG_SYMTAB_FILE "out.tab"
+
 
 
 #define DEPENDENCY_DEPENDENT 		1
@@ -31,7 +32,7 @@ typedef struct dependency {
 
 
 FILE *codeOutputFile;
-FILE *symTabFile;
+
 
 // public API
 int  cg_init_files();

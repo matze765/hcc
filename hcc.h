@@ -9,7 +9,7 @@
 #include "node.h"
 #include "variableQueueLogic.h"
 #include "codeGeneration.h"
-
+#include "symTab.h"
 
 queue *literalQueue;
 queue *predicateQueue;

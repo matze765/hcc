@@ -4,12 +4,12 @@
 dependency *cg_calc_dependency(queue *variableQueue, queue *newVarQueue, int i, int j);
 void cg_write_nodes_to_file(queue *nodes);
 void cg_backpatch(node *source, int side, node *target, int port);
+int cg_get_adicity(char *literal);
 
 int cg_init_files(){
 	codeOutputFile = fopen(CG_CODE_OUTPUT_FILE, "w+");
-	symTabFile	 = fopen(CG_SYMTAB_FILE, "w+");
-	if(codeOutputFile == NULL || symTabFile == NULL) {
-		cg_close_files();
+
+	if(codeOutputFile == NULL) {
 		return -1;
 	} else {
 		return 0;	
@@ -20,11 +20,7 @@ void cg_close_files(){
 	if(codeOutputFile != NULL){
 		fclose(codeOutputFile);
 	}
-	if(symTabFile != NULL){
-		fclose(symTabFile);
-	}
 	codeOutputFile = NULL;
-	symTabFile = NULL;
 }
 dependency *cg_calc_dependency(queue *variableQueue, queue *newVarQueue, int i, int j) {
 	dependency *d = (dependency *) malloc(sizeof(dependency));
@@ -147,13 +143,32 @@ dependency *cg_calc_dependency(queue *variableQueue, queue *newVarQueue, int i, 
 //TODO cleanup
 void cg_generate_code(queue *variableQueue, queue *newVarQueue, 
 			      queue *predicateQueue, queue *literalQueue){
+
+	
+					  
+	
 	queue *nodes = queue_new(); 
 	if(queue_getCount(predicateQueue) == 1 ) { // fact
 		node *e =	(node *) createNode(nodes, 'E', (char *) queue_getItem(literalQueue, 0));
 		node *r = 	(node *) createNode(nodes, 'R',NULL);
 		cg_backpatch(e,LEFT_PORT,r,LEFT_PORT);
+		
+		
+		//add predicate to symTab
+		st_add_predicate( 	(char *) queue_getItem(predicateQueue, 0),
+							cg_get_adicity((char *) queue_getItem(literalQueue, 0)),
+							e->nr);
+		
+		
 	} 	else {    // clause
 		node *e 	= 	(node *) createNode(nodes, 'E', (char *) queue_getItem(literalQueue, 0));
+		
+		//add predicate to symTab
+		st_add_predicate( 	(char *) queue_getItem(predicateQueue, 0),
+							cg_get_adicity((char *) queue_getItem(literalQueue, 0)),
+							e->nr);
+		
+		
 		// last U Node in clause
 		node *lastU =	e;
 		
@@ -379,6 +394,17 @@ void cg_backpatch(node *source, int side, node *target, int port){
 			source->rightNodePort = port; 
 		}
 	}
+	
+}
+
+int cg_get_adicity(char *literal) {
+	int adicity =1;
+	char *a = literal;
+	while(*a != '\0'){
+		if(*a==',') adicity++;
+		a++;
+	}
+	return adicity;
 	
 }
 

@@ -13,11 +13,14 @@ int ruleNumber=-1;
 	
 //TODO dynamic file names
 int main (void){
-  if(cg_init_files() == -1) {
+  if(cg_init_files() == -1 ||
+	 st_init_symTab() == -1) {
 	return -1;  
   } else {
 	yyparse();
 	cg_close_files();
+	st_print_symTab();
+	st_close_files();
   } 
   return 0;
 }
