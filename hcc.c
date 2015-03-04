@@ -10,9 +10,6 @@ extern int lineNumber;
 
 int ruleNumber=-1;
 
-
-
-
 	
 //TODO dynamic file names
 int main (void){

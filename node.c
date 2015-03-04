@@ -1,6 +1,8 @@
 #include "node.h"
 
 
+int nodeNr=1;
+
 node *node_new() {
 	node *n = (node *) malloc(sizeof(node));
 	if(n == NULL) return n;
@@ -24,17 +26,18 @@ copyNode *copyNode_new(){
 
 void *createNode(queue *nodeQueue, char type,  char *str){
 	node *n; copyNode *cn;
-	int nr = queue_getCount(nodeQueue)+1;
 	if(type == 'C'){
 		cn = copyNode_new();
 		if(cn == NULL) return cn;
-		cn->nr = nr;
+		cn->nr = nodeNr;
+		nodeNr++;
 		queue_enqueue(nodeQueue, cn);
 		return cn;
 	} else {
 		n = node_new();
 		if(n==NULL) return n;
-		n->nr   = nr;
+		n->nr   = nodeNr;
+		nodeNr++;
 		n->type = type;
 		n->leftNode  		= 0;
 		n->leftNodePort 	= 0;

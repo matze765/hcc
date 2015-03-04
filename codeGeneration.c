@@ -366,7 +366,6 @@ void cg_write_nodes_to_file(queue *nodes){
 		fprintf(codeOutputFile, "\n");
 		n = (node *) queue_dequeue(nodes);
 	}
-	fprintf(codeOutputFile, "\n");
 }
 void cg_backpatch(node *source, int side, node *target, int port){
 	if(source->type == 'C'){
