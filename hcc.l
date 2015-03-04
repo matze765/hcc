@@ -27,6 +27,15 @@ id ([a-z][a-zA-Z0-9_]*)
 \] return CBR;
 \| return PIPE;
 \, return COMMA;
+> return GT;
+>= return GEQ;
+\<  return LT;
+\<= return LEQ;
+= return U;
+\\= return NU;
+== return EQ;
+\\== return NEQ;
+
 \n ++lineNumber;
 [ \t] 
 . {char* a= malloc(8*1000); sprintf(a,"Unexpected Character %s",yytext); yyerror(a);};

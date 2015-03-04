@@ -17,6 +17,7 @@
 %token ID id DOT IFTHEN
 %token OPA CPA COMMA
 %token OBR CBR PIPE
+%token GT GEQ LT LEQ U NU EQ NEQ
 
 %union{
 	int ival; 
@@ -29,6 +30,11 @@
 %type<sval> id
 %type<sval> expression
 %type<qval> expressionList
+%type<sval> op
+
+%type<sval> rop
+
+
 
 
 
@@ -63,6 +69,8 @@ head
 body 
 	: literal DOT
 	| literal COMMA body
+	| r_literal DOT
+	| r_literal COMMA body
 	;
 
 literal
@@ -78,7 +86,26 @@ h_beginOfLiteral
 						begin_of_literal();
 					}
 	;
-	
+r_literal
+	: h_beginOfLiteral op rop op     {
+										add_predicate($3);
+										queue *q = queue_new();
+										queue_enqueue(q, $2);
+										queue_enqueue(q, $4);
+										add_literal($3, q);
+										end_of_literal();
+									}
+									
+rop 
+	: GT 	{  $$ = strdup(">");	}
+	| GEQ 	{  $$ = strdup(">=");	}
+	| LT 	{  $$ = strdup("<");	}
+	| LEQ 	{  $$ = strdup("<=");	}
+	| U 	{  $$ = strdup("=");	}
+	| NU 	{  $$ = strdup("\\=");	}
+	| EQ 	{  $$ = strdup("==");	}
+	| NEQ 	{  $$ = strdup("\\=");	};
+									
 expressionList 
 	: expression   							{
 												$$ = queue_new();
@@ -92,14 +119,19 @@ expressionList
 											}
 	;
 	
+op 	
+	: id {
+			$$=$1;
+		 }
+	| ID {
+			$$=$1;
+			add_variable($1);
+		 }
+	
 expression 
-	: id   
+	: op   
 			{
 				$$=$1;
-			}
-	| ID	{
-				$$=$1;
-				add_variable($1);
 			}
 	| OBR expression PIPE expression CBR 	{
 												$$ = (char *) malloc(1000);

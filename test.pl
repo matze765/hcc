@@ -17,5 +17,8 @@ a([A],[B]) :- b([[A]]), c([B]).
 %8
 a(X,Y,Z) :- b(X,Y), c(X,Z), d(X).
 
+%9
+a(X,Y) :- X>Y, X>=Y, X<Y, X<=Y, X = Y, X==Y, X\=Y, X\==Y.
+
 
 
