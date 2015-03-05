@@ -14,7 +14,7 @@
 
 // Define all tokens used in the source code
 %start programm
-%token ID id DOT IFTHEN
+%token ID id num DOT IFTHEN
 %token OPA CPA COMMA
 %token OBR CBR PIPE
 %token GT GEQ LT LEQ U NU EQ NEQ
@@ -28,6 +28,7 @@
 
 %type<sval> ID
 %type<sval> id
+%type<sval> num
 %type<sval> expression
 %type<qval> expressionList
 %type<sval> op
@@ -127,12 +128,17 @@ op
 			$$=$1;
 			add_variable($1);
 		 }
+	| num	{
+		$$=$1;
+			}
+	;
 	
 expression 
 	: op   
 			{
 				$$=$1;
 			}
+	
 	| OBR expression PIPE expression CBR 	{
 												$$ = (char *) malloc(1000);
 												sprintf($$, "[%s|%s]", $2, $4);

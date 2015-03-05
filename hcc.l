@@ -12,12 +12,13 @@ int lineNumber=1;
 
 ID ([A-Z][a-zA-Z0-9_]*)
 id ([a-z][a-zA-Z0-9_]*)
+num ([1-9][0-9]*(\.[0-9]+)?)
 
 %%
 
 {ID} {yylval.sval = strdup(yytext); return ID;};
 {id} {yylval.sval = strdup(yytext); return id;};  
-
+{num} {yylval.sval = strdup(yytext); return num;}
 \%.*\n {++lineNumber; }   
 \. return DOT;
 :- return IFTHEN;

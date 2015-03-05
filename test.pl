@@ -21,4 +21,4 @@ a(X,Y,Z) :- b(X,Y), c(X,Z), d(X).
 a(X,Y) :- X>Y, X>=Y, X<Y, X<=Y, X = Y, X==Y, X\=Y, X\==Y.
 
 
-
+a(X,Y) :- b(5), c(5.117), 5 > X, d([5|T]).
