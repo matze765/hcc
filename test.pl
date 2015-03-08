@@ -22,3 +22,15 @@ a(X,Y) :- X>Y, X>=Y, X<Y, X<=Y, X = Y, X==Y, X\=Y, X\==Y.
 
 
 a(X,Y) :- b(5), c(5.117), 5 > X, d([5|T]).
+
+
+ar(X,Y) :- X+Y>5.
+ar(X,Y) :- a(X-Y).
+ar(X,Y) :- X*Y>5.
+ar(X,Y) :- a(X/Y), b(X+Y*X).
+ar(X,Y) :- X+Y*X>5.
+ar(X,Y) :- X-Y/X>5.
+ar(X,Y) :- X*Y/X>5.
+ar(X,Y) :- (X+Y)*X>5.
+
+

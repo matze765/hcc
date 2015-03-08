@@ -18,7 +18,7 @@
 %token OPA CPA COMMA
 %token OBR CBR PIPE
 %token GT GEQ LT LEQ U NU EQ NEQ
-
+%token PLUS MINUS TIMES DIV
 %union{
 	int ival; 
 	float fval;
@@ -36,6 +36,8 @@
 %type<sval> rop
 
 
+%left PLUS MINUS
+%left TIMES DIV
 
 
 
@@ -131,7 +133,28 @@ op
 	| num	{
 		$$=$1;
 			}
+	| op PLUS op 	{
+						$$ = (char *) malloc(1000);
+						sprintf($$, "+(%s,%s)", $1,$3);
+					}
+	| op MINUS op 	{
+						$$ = (char *) malloc(1000);
+						sprintf($$, "-(%s,%s)", $1,$3);
+					}
+	| op TIMES op 	{
+						$$ = (char *) malloc(1000);
+						sprintf($$, "*(%s,%s)", $1,$3);
+					}
+					
+	| op DIV op 	{
+						$$ = (char *) malloc(1000);
+						sprintf($$, "/(%s,%s)", $1,$3);
+					}
+	| OPA op CPA 	{
+						$$ = $2;
+					}
 	;
+	
 	
 expression 
 	: op   

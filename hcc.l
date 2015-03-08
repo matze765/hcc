@@ -36,6 +36,11 @@ num ([1-9][0-9]*(\.[0-9]+)?)
 \\= return NU;
 == return EQ;
 \\== return NEQ;
+\+ return PLUS;
+- return MINUS;
+\* return TIMES;
+\/ return DIV;
+
 
 \n ++lineNumber;
 [ \t] 
