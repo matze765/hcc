@@ -20,7 +20,7 @@ a(X,Y,Z) :- b(X,Y), c(X,Z), d(X).
 %9
 a(X,Y) :- X>Y, X>=Y, X<Y, X<=Y, X = Y, X==Y, X\=Y, X\==Y.
 
-
+%10
 a(X,Y) :- b(5), c(5.117), 5 > X, d([5|T]).
 
 
@@ -32,5 +32,13 @@ ar(X,Y) :- X+Y*X>5.
 ar(X,Y) :- X-Y/X>5.
 ar(X,Y) :- X*Y/X>5.
 ar(X,Y) :- (X+Y)*X>5.
+
+ar(X,Y) :- X is Y.
+ar(X, Y) :- X is Y-1.
+ar(X, Y) :- X is Y+1.
+ar(X, Y) :- X is Y*1.
+ar(X, Y) :- X is Y/1.
+
+
 
 

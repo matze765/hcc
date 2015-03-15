@@ -19,6 +19,7 @@
 %token OBR CBR PIPE
 %token GT GEQ LT LEQ U NU EQ NEQ
 %token PLUS MINUS TIMES DIV
+%token IS 
 %union{
 	int ival; 
 	float fval;
@@ -38,7 +39,7 @@
 
 %left PLUS MINUS
 %left TIMES DIV
-
+%left IS
 
 
 
@@ -107,7 +108,10 @@ rop
 	| U 	{  $$ = strdup("=");	}
 	| NU 	{  $$ = strdup("\\=");	}
 	| EQ 	{  $$ = strdup("==");	}
-	| NEQ 	{  $$ = strdup("\\=");	};
+	| NEQ 	{  $$ = strdup("\\=");	}
+	| IS    {  $$ = strdup("is");   }
+	;
+
 									
 expressionList 
 	: expression   							{

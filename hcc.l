@@ -15,7 +15,7 @@ id ([a-z][a-zA-Z0-9_]*)
 num ([1-9][0-9]*(\.[0-9]+)?)
 
 %%
-
+is return IS; 
 {ID} {yylval.sval = strdup(yytext); return ID;};
 {id} {yylval.sval = strdup(yytext); return id;};  
 {num} {yylval.sval = strdup(yytext); return num;}
