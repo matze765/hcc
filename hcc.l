@@ -31,7 +31,7 @@ is return IS;
 > return GT;
 >= return GEQ;
 \<  return LT;
-\<= return LEQ;
+=\< return LEQ;
 = return U;
 \\= return NU;
 == return EQ;

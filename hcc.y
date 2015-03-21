@@ -33,6 +33,7 @@
 %type<sval> expression
 %type<qval> expressionList
 %type<sval> op
+%type<sval> function
 
 %type<sval> rop
 
@@ -104,7 +105,7 @@ rop
 	: GT 	{  $$ = strdup(">");	}
 	| GEQ 	{  $$ = strdup(">=");	}
 	| LT 	{  $$ = strdup("<");	}
-	| LEQ 	{  $$ = strdup("<=");	}
+	| LEQ 	{  $$ = strdup("=<");	}
 	| U 	{  $$ = strdup("=");	}
 	| NU 	{  $$ = strdup("\\=");	}
 	| EQ 	{  $$ = strdup("==");	}
@@ -174,7 +175,30 @@ expression
 												$$ = (char *) malloc(1000);
 												sprintf($$, "[%s]", $2);
 											}
+	| function								{
+												$$=$1;
+											}
 	;
+	
+function 
+	: id OPA expressionList CPA  			{
+												
+												char *tmp = (char *) malloc(1000);
+												strcpy(tmp, "");
+												int i;
+												for(i=0;i<queue_getCount($3);i++){
+													char *itm = (char *)queue_getItem($3, i);
+													if(i!=0){
+														sprintf(tmp, "%s,", tmp);
+													}
+													sprintf(tmp, "%s%s", tmp,itm);
+												}
+												queue_clear($3);
+											
+												$$ = (char *) malloc(1000);
+												sprintf($$, "%s(%s)", $1, tmp);
+												free(tmp);
+											}
 
 	
 %%
