@@ -178,6 +178,10 @@ expression
 	| function								{
 												$$=$1;
 											}
+	| OBR CBR								{
+												$$ = (char *) malloc(1000);
+												sprintf($$, "[]");
+											}
 	;
 	
 function 
