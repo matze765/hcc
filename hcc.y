@@ -167,13 +167,35 @@ expression
 				$$=$1;
 			}
 	
-	| OBR expression PIPE expression CBR 	{
+	| OBR expressionList PIPE expression CBR 	{
 												$$ = (char *) malloc(1000);
-												sprintf($$, "[%s|%s]", $2, $4);
+												
+												char *tmp = (char *) malloc(1000);
+												strcpy(tmp, "");
+												int i;
+												for(i=0;i<queue_getCount($2);i++){
+													char *itm = (char *)queue_getItem($2, i);
+													if(i!=0){
+														sprintf(tmp, "%s,", tmp);
+													}
+													sprintf(tmp, "%s%s", tmp,itm);
+												}
+												sprintf($$, "[%s|%s]", tmp, $4);
 											}
-	| OBR expression CBR 					{
+	| OBR expressionList CBR 					{
 												$$ = (char *) malloc(1000);
-												sprintf($$, "[%s]", $2);
+												char *tmp = (char *) malloc(1000);
+												strcpy(tmp, "");
+												int i;
+												for(i=0;i<queue_getCount($2);i++){
+													char *itm = (char *)queue_getItem($2, i);
+													if(i!=0){
+														sprintf(tmp, "%s,", tmp);
+													}
+													sprintf(tmp, "%s%s", tmp,itm);
+												}
+												
+												sprintf($$, "[%s]", tmp);
 											}
 	| function								{
 												$$=$1;
