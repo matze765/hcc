@@ -48,7 +48,7 @@ void st_add_predicate(char *pName, int adicity, int entryLine){
 }
 
 void st_print_symTab(){
-	printf("pritning %d\n",  queue_getCount(symTable->symTabEntries));
+	printf("printing %d\n",  queue_getCount(symTable->symTabEntries));
 	FILE *f = symTabFile;
 	
 	symTabEntry *item = (symTabEntry *) queue_dequeue(symTable->symTabEntries);

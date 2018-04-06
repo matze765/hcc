@@ -9,7 +9,7 @@ Horn Clause Compiler
 ## Build
   - `make`
   - old build scripts are deprecated and should not be used 
-  - if anyone wants to build Windows, good luck 
+  - if anyone wants to build this on Windows, good luck 
 
 
 ## Compiling a file 
