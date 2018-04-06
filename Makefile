@@ -31,3 +31,5 @@ clean:
 	rm -f *.tab.h
 	rm -f *.yy.c
 	rm -f hcc
+	rm -f out.tab
+	rm -f out
