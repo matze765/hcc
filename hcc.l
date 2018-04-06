@@ -7,7 +7,7 @@
 int lineNumber=1;
 
 %}
-
+%option noyywrap
 %option nounput
 
 ID ([A-Z][a-zA-Z0-9_]*)
