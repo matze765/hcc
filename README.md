@@ -11,8 +11,17 @@ Horn Clause Compiler
   - old build scripts are deprecated and should not be used 
   - if anyone wants to build this on Windows, good luck 
 
-
 ## Compiling a file 
  - `./hcc < test.pl`
  - out contains the flow model 
  - out.tab contains the symbol table
+
+## Plotting a flow model
+ - debugging larger flow models can be quite tedious. 
+ - we've created a python script that plots the network graph for a compiled
+ - Intall python dependencies: `pip3 install -r plot/requirements`
+ - You might also need to install `tkinter`: `apt install python3-tk` 
+ - `plot/plot.py out` plots the graph for file out
+ - layout is not perfect; but hopefully it helps a bit
+ - networkx does not support controlling exit/entry positions of edges (afaik)
+   - i.e., we can not model the left/right input/output 
