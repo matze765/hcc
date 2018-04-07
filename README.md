@@ -33,3 +33,8 @@ Horn Clause Compiler
  - `make test` compiled the files in `test/data/in` and compares the output to the expected output in `test/data/out`
  - in case of a mismatch it outputs the file names
  - in case of success it outputs nothing 
+ 
+ 
+ ## License
+ All files in this repository are in the [public domain](https://creativecommons.org/publicdomain/zero/1.0/). 
+ 
