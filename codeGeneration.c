@@ -304,7 +304,7 @@ void cg_generate_code(queue *variableQueue, queue *newVarQueue,
 						cg_backpatch(INode, LEFT_PORT, middleUNode, RIGHT_PORT);
 						
 						if(lastCheckNode != NULL){
-							cg_backpatch(lastCheckNode, RIGHT_PORT, GNode, LEFT_PORT);
+							cg_backpatch(lastCheckNode, RIGHT_PORT, INode, LEFT_PORT);
 						}
 						lastCheckNode = INode;
 						lastUSub     = middleUNode;
