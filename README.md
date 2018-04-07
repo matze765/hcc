@@ -3,8 +3,9 @@ Horn Clause Compiler
 
 
 ## Requirements
-  - flex-dev (`apt install flex`)
+  - flex (`apt install flex`)
   - bison (`apt install bison`)
+  - (optional) python3 for testing and plotting (`apt install python3 python3-pip`)
 
 ## Build
   - `make`
