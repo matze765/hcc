@@ -18,7 +18,7 @@ Horn Clause Compiler
 
 ## Plotting a flow model
  - debugging larger flow models can be quite tedious. 
- - we've created a python script that plots the network graph for a compiled
+ - we've created a python script that plots the network graph for a compiled flow model (`out`) 
  - Intall python dependencies: `pip3 install -r plot/requirements`
  - You might also need to install `tkinter`: `apt install python3-tk` 
  - `plot/plot.py out` plots the graph for file out
