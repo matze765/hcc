@@ -24,6 +24,10 @@ hcc: $(OBJS)
 	$(PARSER) $(PARSERFLAGS) $<
 
 
+.PHONY: force
+
+test: force 
+	./test/test.py
 clean: 
 	rm -f *.o
 	rm -f *.output

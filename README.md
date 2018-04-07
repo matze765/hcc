@@ -24,4 +24,11 @@ Horn Clause Compiler
  - `plot/plot.py out` plots the graph for file out
  - layout is not perfect; but hopefully it helps a bit
  - networkx does not support controlling exit/entry positions of edges (afaik)
-   - i.e., we can not model the left/right input/output 
+   - i.e., we can not model the left/right input/output
+
+
+## Testing
+ - to don't break the compiler, when implementing new functionality, we've implemented a test framework
+ - `make test` compiled the files in `test/data/in` and compares the output to the expected output in `test/data/out`
+ - in case of a mismatch it outputs the file names
+ - in case of success it outputs nothing 
